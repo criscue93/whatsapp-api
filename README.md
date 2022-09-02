@@ -64,8 +64,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Stay in touch
 
-- Author - [Ing. Cristian Cueto V.]
-- Desarrollador - [Ing. Cristian Cueto V.]
+- Author - Ing. Cristian Cueto V.
+- Desarrollador - Ing. Cristian Cueto V.
 
 ## License
 
