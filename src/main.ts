@@ -17,7 +17,7 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('PROYECT NESTJS - API')
+    .setTitle('PROYECT - API')
     .addBearerAuth()
     .setDescription(
       'Basado en principios REST, las APIs devuelve metadatos JSON.',

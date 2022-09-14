@@ -1,8 +1,8 @@
 {
-  "name": "proyect-nestjs",
+  "name": "proyect-api",
   "version": "0.0.1",
   "description": "Proyecto base para desarrollar en NestJs",
-  "author": "Ing. Cristian Cueto V",
+  "author": "Ing. Cristian Cueto V.",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -24,10 +24,12 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/mongoose": "^9.2.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.1.1",
     "@nestjs/typeorm": "^9.0.1",
     "luxon": "^3.0.3",
+    "mongoose": "^6.6.0",
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

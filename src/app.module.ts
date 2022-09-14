@@ -1,26 +1,33 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ApiModule } from './apis/api.module';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from './connection/database.module';
+import { connectProviders } from './connection/connect.providers';
+import { QueryModule } from './services/querys.module';
+import { Proyect, ProyectSchema } from './schemas/proyect.schema';
 @Module({
   imports: [
     ApiModule,
+    DatabaseModule,
+    QueryModule,
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      name: 'proyect',
-      host: process.env.PROYECT_HOST,
-      port: parseInt(process.env.PROYECT_PORT, 10),
-      username: process.env.PROYECT_USER,
-      password: process.env.PROYECT_PASSWORD,
-      database: process.env.PROYECT_DATABASE,
-      entities: [],
-      synchronize: false,
+    MongooseModule.forRoot(process.env.PROYECT_MONGO, {
+      connectionName: 'proyect',
     }),
+    MongooseModule.forFeature(
+      [
+        {
+          name: Proyect.name,
+          schema: ProyectSchema,
+        },
+      ],
+      'proyect',
+    ),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [...connectProviders, AppService],
 })
 export class AppModule {}
