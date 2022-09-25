@@ -14,7 +14,7 @@ import { Proyect, ProyectSchema } from './schemas/proyect.schema';
     DatabaseModule,
     QueryModule,
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.PROYECT_MONGO, {
+    MongooseModule.forRoot(process.env.APP_MONGO, {
       connectionName: 'proyect',
     }),
     MongooseModule.forFeature(

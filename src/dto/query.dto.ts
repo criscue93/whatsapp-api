@@ -74,28 +74,19 @@ export class querySelectDTO {
   select?: any;
 
   @ApiProperty({
-    description: 'json de where y where Value',
+    description: 'json de inner y condiciones',
   })
-  where: whereDTO;
+  inner?: innerDTO;
 
   @ApiProperty({
-    description: 'Order By',
+    description: 'json de where y condiciones',
   })
-  orderBy?: { key: string; value: 'DESC' | 'ASC' };
+  where?: whereDTO;
 
   @ApiProperty({
-    type: Boolean,
-    description: 'ERROR debe ser booleano.',
-    default: true,
+    description: 'json de order y condiciones',
   })
-  oneResult?: boolean;
-
-  @ApiProperty({
-    type: Number,
-    description: 'limite de la consulta',
-    default: 1,
-  })
-  limit?: number;
+  order?: orderDTO;
 }
 
 class whereDTO {
@@ -108,4 +99,97 @@ class whereDTO {
     description: 'valores de la consulta',
   })
   values: any;
+}
+
+class orderDTO {
+  @ApiProperty({
+    description: 'Order By condicion',
+    default: '',
+  })
+  sortField?: any;
+
+  @ApiProperty({
+    description: 'Order By tipo de orden',
+    default: '',
+  })
+  sortType?: any;
+
+  @ApiProperty({
+    type: Number,
+    description: 'Cantidad de datos a generar.',
+    default: 5,
+  })
+  skip?: number;
+
+  @ApiProperty({
+    type: Number,
+    description: 'limite de la consulta',
+    default: 100,
+  })
+  limit?: number;
+}
+
+class innerDTO {
+  @ApiProperty({
+    type: String,
+    description: 'left join a una tabla',
+    default: '',
+  })
+  leftInner1?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'alias de la tabla del inner',
+    default: '',
+  })
+  innerAlias1?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'condición del inner',
+    default: '',
+  })
+  innerCondicion1?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'left join a una tabla',
+    default: '',
+  })
+  leftInner2?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'alias de la tabla del inner',
+    default: '',
+  })
+  innerAlias2?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'condición del inner',
+    default: '',
+  })
+  innerCondicion2?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'left join a una tabla',
+    default: '',
+  })
+  leftInner3?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'alias de la tabla del inner',
+    default: '',
+  })
+  innerAlias3?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'condición del inner',
+    default: '',
+  })
+  innerCondicion3?: string;
 }

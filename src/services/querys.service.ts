@@ -1,13 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { queryDTO, querySelectDTO, ResponseDTO } from 'src/dto/query.dto';
-import { Proyect } from 'src/entitys/proyect.entity';
 
 @Injectable()
 export class queryService {
   constructor(
     @Inject('CONNECT_REPOSITORY')
-    private victimasRepository: Repository<Proyect>,
+    private victimasRepository,
   ) {}
 
   async selectQuery(data: querySelectDTO): Promise<ResponseDTO> {
@@ -19,60 +17,29 @@ export class queryService {
       status: 422,
     };
 
-    let oneResult = true;
-    if (data.oneResult !== undefined) {
-      oneResult = data.oneResult;
-    }
-
-    let select = '*';
-    if (data.select) {
-      select = data.select;
-    }
-
-    let orderByKey = 'id';
-    let orderByValue = null;
-    if (data.orderBy) {
-      orderByKey = data.orderBy.key;
-      orderByValue = data.orderBy.value;
-    } else {
-      orderByValue = 'DESC';
-    }
-
-    let where = {
-      where: 'True',
-      values: {},
-    };
-    if (data.where) {
-      where = data.where;
-    }
-
     // === OPERACION ===
     try {
       const queryReturn = await this.victimasRepository
         .createQueryBuilder()
-        .select(select)
+        .select(data.select)
         .from(data.table, data.alias)
-        .where(where.where, where.values)
-        .orderBy(orderByKey, orderByValue)
         .execute();
 
       if (queryReturn.length > 0) {
         response.error = false;
-        response.message = `Se logró obtener un resultado de la tabla ${data.table}.`;
-        if (oneResult) {
-          response.response = queryReturn[0];
-        } else {
-          response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
-          response.response = queryReturn;
-        }
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
         response.status = 200;
-      } else {
-        response.message = 'No existen valores.';
+      } else if (queryReturn.length === 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
       }
     } catch (error) {
       response.message = 'No se logró realizar la Consulta.';
       response.response = {
-        errors: { erroSql: [`${error.message}`] },
+        errors: { query: [`${error.message}`] },
       };
       response.status = 500;
     }
@@ -81,75 +48,232 @@ export class queryService {
     return response;
   }
 
-  async selectByLimitQuery(data: querySelectDTO): Promise<ResponseDTO> {
+  async selectWhereQuery(data: querySelectDTO): Promise<ResponseDTO> {
     // === INICIALIZACION DE VARIABLES ===
     const response: ResponseDTO = {
       error: true,
-      message: 'Existe problemas con selectByLimitQuery.',
+      message: 'Existe problemas con selectQuery.',
       response: {},
       status: 422,
     };
-
-    let oneResult = true;
-    if (data.oneResult !== undefined) {
-      oneResult = data.oneResult;
-    }
-
-    let select = '*';
-    if (data.select) {
-      select = data.select;
-    }
-
-    let limit = 1;
-    if (data.limit) {
-      limit = data.limit;
-    }
-
-    let orderByKey = 'id';
-    let orderByValue = null;
-    if (data.orderBy) {
-      orderByKey = data.orderBy.key;
-      orderByValue = data.orderBy.value;
-    } else {
-      orderByValue = 'DESC';
-    }
-
-    let where = {
-      where: 'True',
-      values: {},
-    };
-    if (data.where) {
-      where = data.where;
-    }
 
     // === OPERACION ===
     try {
       const queryReturn = await this.victimasRepository
         .createQueryBuilder()
-        .select(select)
+        .select(data.select)
         .from(data.table, data.alias)
-        .where(where.where, where.values)
-        .orderBy(orderByKey, orderByValue)
-        .limit(limit)
+        .where(data.where.where, data.where.values)
         .execute();
 
       if (queryReturn.length > 0) {
         response.error = false;
-        response.message = `Se logró obtener un resultado de la tabla ${data.table}.`;
-        if (oneResult) {
-          response.response = queryReturn[0];
-        } else {
-          response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
-          response.response = queryReturn;
-        }
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
         response.status = 200;
-      } else {
-        response.message = 'No existen valores.';
+      } else if (queryReturn.length === 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
       }
     } catch (error) {
       response.message = 'No se logró realizar la Consulta.';
       response.response = {
-        errors: { erroSql: [`${error.message}`] },
+        errors: { query: [`${error.message}`] },
+      };
+      response.status = 500;
+    }
+
+    // === RESPUESTAS ===
+    return response;
+  }
+
+  async selectWhereQueryInner1(data: querySelectDTO): Promise<ResponseDTO> {
+    // === INICIALIZACION DE VARIABLES ===
+    const response: ResponseDTO = {
+      error: true,
+      message: 'Existe problemas con selectQuery.',
+      response: {},
+      status: 422,
+    };
+
+    // === OPERACION ===
+    try {
+      const queryReturn = await this.victimasRepository
+        .createQueryBuilder()
+        .select(data.select)
+        .from(data.table, data.alias)
+        .leftJoin(
+          data.inner.leftInner1,
+          data.inner.innerAlias1,
+          data.inner.innerCondicion1,
+        )
+        .where(data.where.where, data.where.values)
+        .execute();
+
+      if (queryReturn.length > 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
+      } else if (queryReturn.length === 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
+      }
+    } catch (error) {
+      response.message = 'No se logró realizar la Consulta.';
+      response.response = {
+        errors: { query: [`${error.message}`] },
+      };
+      response.status = 500;
+    }
+
+    // === RESPUESTAS ===
+    return response;
+  }
+
+  async selectFilterQuery(data: querySelectDTO): Promise<ResponseDTO> {
+    // === INICIALIZACION DE VARIABLES ===
+    const response: ResponseDTO = {
+      error: true,
+      message: 'Existe problemas con selectQuery.',
+      response: {},
+      status: 422,
+    };
+
+    // === OPERACION ===
+    try {
+      const queryReturn = await this.victimasRepository
+        .createQueryBuilder()
+        .select(data.select)
+        .from(data.table, data.alias)
+        .where(data.where.where, data.where.values)
+        .orderBy(data.order.sortField, data.order.sortType)
+        .offset(data.order.skip)
+        .limit(data.order.limit)
+        .execute();
+
+      if (queryReturn.length > 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
+      } else if (queryReturn.length === 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
+      }
+    } catch (error) {
+      response.message = 'No se logró realizar la Consulta.';
+      response.response = {
+        errors: { query: [`${error.message}`] },
+      };
+      response.status = 500;
+    }
+
+    // === RESPUESTAS ===
+    return response;
+  }
+
+  async selectFilterQueryInner1(data: querySelectDTO): Promise<ResponseDTO> {
+    // === INICIALIZACION DE VARIABLES ===
+    const response: ResponseDTO = {
+      error: true,
+      message: 'Existe problemas con selectQuery.',
+      response: {},
+      status: 422,
+    };
+
+    // === OPERACION ===
+    try {
+      const queryReturn = await this.victimasRepository
+        .createQueryBuilder()
+        .select(data.select)
+        .from(data.table, data.alias)
+        .leftJoin(
+          data.inner.leftInner1,
+          data.inner.innerAlias1,
+          data.inner.innerCondicion1,
+        )
+        .where(data.where.where, data.where.values)
+        .orderBy(data.order.sortField, data.order.sortType)
+        .offset(data.order.skip)
+        .limit(data.order.limit)
+        .execute();
+
+      if (queryReturn.length > 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
+      } else if (queryReturn.length === 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
+      }
+    } catch (error) {
+      response.message = 'No se logró realizar la Consulta.';
+      response.response = {
+        errors: { query: [`${error.message}`] },
+      };
+      response.status = 500;
+    }
+
+    // === RESPUESTAS ===
+    return response;
+  }
+
+  async selectFilterQueryInner2(data: querySelectDTO): Promise<ResponseDTO> {
+    // === INICIALIZACION DE VARIABLES ===
+    const response: ResponseDTO = {
+      error: true,
+      message: 'Existe problemas con selectQuery.',
+      response: {},
+      status: 422,
+    };
+
+    // === OPERACION ===
+    try {
+      const queryReturn = await this.victimasRepository
+        .createQueryBuilder()
+        .select(data.select)
+        .from(data.table, data.alias)
+        .leftJoin(
+          data.inner.leftInner1,
+          data.inner.innerAlias1,
+          data.inner.innerCondicion1,
+        )
+        .leftJoin(
+          data.inner.leftInner2,
+          data.inner.innerAlias2,
+          data.inner.innerCondicion2,
+        )
+        .where(data.where.where, data.where.values)
+        .orderBy(data.order.sortField, data.order.sortType)
+        .offset(data.order.skip)
+        .limit(data.order.limit)
+        .execute();
+
+      if (queryReturn.length > 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
+      } else if (queryReturn.length === 0) {
+        response.error = false;
+        response.message = `Se logró obtener ${queryReturn.length} resultados de la tabla ${data.table}.`;
+        response.response = { data: queryReturn, total: queryReturn.length };
+        response.status = 200;
+      }
+    } catch (error) {
+      response.message = 'No se logró realizar la Consulta.';
+      response.response = {
+        errors: { query: [`${error.message}`] },
       };
       response.status = 500;
     }
@@ -177,13 +301,13 @@ export class queryService {
         .execute();
 
       response.error = false;
-      response.message = `Se logró registrar en la tabla ${data.table}.`;
-      response.response = queryReturn;
+      response.message = 'Se lograron registrar los datos correctamente.';
+      response.response = queryReturn.identifiers[0].id;
       response.status = 200;
     } catch (error) {
-      response.message = `No se logró registrar  en la tabla ${data.table}.`;
+      response.message = 'No se lograron registrar los datos.';
       response.response = {
-        errors: { erroSql: [`${error.message}`] },
+        errors: { query: [`${error.message}`] },
       };
       response.status = 500;
     }
@@ -211,13 +335,13 @@ export class queryService {
         .execute();
 
       response.error = false;
-      response.message = `Se logró modificar la información de la tabla ${data.table}.`;
-      response.response = queryReturn;
+      response.message = 'Se lograron modificar los datos correctamente.';
+      response.response = queryReturn.affected;
       response.status = 200;
     } catch (error) {
-      response.message = `No se logró modificar en la tabla ${data.table}.`;
+      response.message = 'No se logró modificar los datos.';
       response.response = {
-        errors: { erroSql: [`${error.message}`] },
+        errors: { query: [`${error.message}`] },
       };
       response.status = 500;
     }
@@ -245,13 +369,13 @@ export class queryService {
         .execute();
 
       response.error = false;
-      response.message = 'Se logró eliminar el la tabla.';
-      response.response = queryReturn;
+      response.message = 'Se lograron eliminar los datos correctamente.';
+      response.response = queryReturn.affected;
       response.status = 200;
     } catch (error) {
-      response.message = `No se logró eliminar en la tabla ${data.table}.`;
+      response.message = 'No se lograron eliminar los datos.';
       response.response = {
-        errors: { erroSql: [`${error.message}`] },
+        errors: { query: [`${error.message}`] },
       };
       response.status = 500;
     }
