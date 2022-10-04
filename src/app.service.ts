@@ -6,7 +6,7 @@ import { IResponse } from './interfaces/IResponse';
 import { Whatsapp, WhatsappDocument } from './schemas/whatsapp.schema';
 import { whatsappDTO } from './dto/whatsapp.dto';
 import * as qrcode from 'qrcode-terminal';
-import { Client, LocalAuth } from 'whatsapp-web.js';
+import { Client, LocalAuth, MessageMedia } from 'whatsapp-web.js';
 
 @Injectable()
 export class AppService {
@@ -77,6 +77,19 @@ export class AppService {
       const number = `${data.numero}@c.us`;
       const sms = data.mensaje;
       this.client.sendMessage(number, sms);
+
+      if (data.adjuntos.length > 0) {
+        let condi = 0;
+        while (data.adjuntos[condi] != undefined) {
+          const adjunto = new MessageMedia(
+            data.adjuntos[condi]['tipo'],
+            data.adjuntos[condi]['base64'],
+            data.adjuntos[condi]['nombre'],
+          );
+          this.client.sendMessage(number, adjunto);
+          condi++;
+        }
+      }
 
       response.error = false;
       response.message = 'Se logró enviar el mensaje correctamente';

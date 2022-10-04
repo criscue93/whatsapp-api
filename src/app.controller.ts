@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Res, Version } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { whatsappDTO } from './dto/whatsapp.dto';
 import { validate } from 'class-validator';
@@ -54,6 +54,42 @@ export class AppController {
   @ApiOperation({
     summary: 'Servicio enviar mensajes por correo',
   })
+  @ApiBody({
+    schema: {
+      properties: {
+        numero: {
+          type: 'number',
+          example: 59156487954,
+        },
+        mensaje: {
+          type: 'string',
+          example: 'Mensaje de prueba',
+        },
+        adjuntos: {
+          type: 'object',
+          example: [
+            {
+              tipo: 'pdf',
+              base64: 'Base 64 del archivo a enviar',
+              nombre: 'nombre del archivo',
+            },
+          ],
+        },
+        funcionarioId: {
+          type: 'number',
+          example: 0,
+        },
+        aplicacion: {
+          type: 'string',
+          example: 'nombre de la aplicación',
+        },
+        guardar: {
+          type: 'boolean',
+          example: true,
+        },
+      },
+    },
+  })
   async sendMessage(@Res() res: Response, @Body() body: whatsappDTO) {
     let response = {
       error: true,
@@ -65,6 +101,7 @@ export class AppController {
     const data = new whatsappDTO();
     data.numero = body.numero;
     data.mensaje = body.mensaje;
+    data.adjuntos = body.adjuntos;
     data.funcionarioId = body.funcionarioId;
     data.aplicacion = body.aplicacion;
     data.guardar = body.guardar;

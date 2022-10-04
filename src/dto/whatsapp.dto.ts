@@ -8,13 +8,10 @@ import {
 } from 'class-validator';
 
 export class whatsappDTO {
-  @IsString({ message: 'El número de destino tienen que ser una cadena.' })
+  @IsInt({ message: 'El número de destino tienen que ser un número.' })
   @IsDefined({ message: 'El número de destino son obligatorios.' })
-  @MinLength(1, {
-    message: 'El número de destino debe contener al menos 1 caracter.',
-  })
   @ApiProperty()
-  numero: string;
+  numero: number;
 
   @IsString({ message: 'Subject tiene que ser una cadena.' })
   @IsDefined({ message: 'Subject es obligatorio.' })
@@ -23,6 +20,9 @@ export class whatsappDTO {
   })
   @ApiProperty()
   mensaje: string;
+
+  @ApiProperty()
+  adjuntos: any[];
 
   @IsInt({ message: 'El id del funcionario tiene que ser un número' })
   @ApiProperty()
