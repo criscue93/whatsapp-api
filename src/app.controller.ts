@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Res, Version } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppService } from './app.service';
-import { whatsappDTO } from './dto/whatsapp.dto';
+import { searchDTO, whatsappDTO } from './dto/whatsapp.dto';
 import { validate } from 'class-validator';
 
 @ApiTags('INICIO')
@@ -44,6 +44,54 @@ export class AppController {
     } catch (error) {
       response.response = error;
       response.status = 500;
+    }
+
+    return res.status(response.status).json(response);
+  }
+
+  @Version('1')
+  @Post('/search')
+  @ApiOperation({
+    summary: 'Servicio enviar mensajes por correo',
+  })
+  @ApiBody({
+    schema: {
+      properties: {
+        numero: {
+          type: 'number',
+          example: 59156487954,
+        },
+      },
+    },
+  })
+  async searchUser(@Res() res: Response, @Body() body: searchDTO) {
+    let response = {
+      error: true,
+      message: 'Existen problemas con el controlador searchUser',
+      response: {},
+      status: 422,
+    };
+
+    const data = new searchDTO();
+    data.numero = body.numero;
+
+    const valid = await validate(data);
+    if (valid.length > 0) {
+      const errorArray = valid.map((o) => ({
+        [o.property]: Object.values(o.constraints),
+      }));
+
+      response.error = true;
+      response.message = 'Error de validación';
+      response.response = errorArray;
+      response.status = 406;
+    } else {
+      try {
+        response = await this.appService.searchUser(data);
+      } catch (error) {
+        response.response = error;
+        response.status = 500;
+      }
     }
 
     return res.status(response.status).json(response);
@@ -102,8 +150,6 @@ export class AppController {
     data.numero = body.numero;
     data.mensaje = body.mensaje;
     data.adjuntos = body.adjuntos;
-    data.funcionarioId = body.funcionarioId;
-    data.aplicacion = body.aplicacion;
     data.guardar = body.guardar;
 
     const valid = await validate(data);
@@ -136,16 +182,18 @@ export class AppController {
         }
 
         if (data.guardar === true) {
+          let fichero = true;
+          if (data.adjuntos.length === 0) {
+            fichero = false;
+          }
           const logs = {
             origen: {
               numero: process.env.FROM_SEND,
-              app_nombre: data.aplicacion,
-              funcionario: data.funcionarioId,
             },
             destino: {
               numero: data.numero,
               mensaje: data.mensaje,
-              fichero: false,
+              fichero,
             },
             enviado: estadoEnvio,
           };

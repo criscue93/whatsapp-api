@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { Model } from 'mongoose';
 import { IResponse } from './interfaces/IResponse';
 import { Whatsapp, WhatsappDocument } from './schemas/whatsapp.schema';
-import { whatsappDTO } from './dto/whatsapp.dto';
+import { searchDTO, whatsappDTO } from './dto/whatsapp.dto';
 import * as qrcode from 'qrcode-terminal';
 import { Client, LocalAuth, MessageMedia } from 'whatsapp-web.js';
 
@@ -60,6 +60,29 @@ export class AppService {
     } catch (error) {
       response.response = error;
       response.status = 500;
+    }
+
+    return response;
+  }
+
+  async searchUser(data: searchDTO): Promise<IResponse> {
+    const response: IResponse = {
+      error: true,
+      message: 'Existen problemas con el servicio de sendMessage',
+      response: {},
+      status: 422,
+    };
+
+    const number = `${data.numero}@c.us`;
+    const answer = this.client.getNumberId(number);
+    const respuesta = await answer.then((res) => res);
+
+    if (respuesta === null) {
+      response.message = 'El número no tiene cuenta en whatsapp.';
+    } else {
+      response.error = false;
+      response.message = 'El número tiene cuenta de whatsapp.';
+      response.status = 200;
     }
 
     return response;

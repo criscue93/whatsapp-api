@@ -24,16 +24,14 @@ export class whatsappDTO {
   @ApiProperty()
   adjuntos: any[];
 
-  @IsInt({ message: 'El id del funcionario tiene que ser un número' })
-  @ApiProperty()
-  funcionarioId: number;
-
-  @IsDefined({ message: 'El nombre de la aplicación es obligatorio' })
-  @IsString({ message: 'El nombre de la aplicación debe ser una cadena' })
-  @ApiProperty()
-  aplicacion: string;
-
   @ApiProperty()
   @IsBoolean()
   guardar: boolean;
+}
+
+export class searchDTO {
+  @IsInt({ message: 'El número de destino tienen que ser un número.' })
+  @IsDefined({ message: 'El número de destino son obligatorios.' })
+  @ApiProperty()
+  numero: number;
 }
