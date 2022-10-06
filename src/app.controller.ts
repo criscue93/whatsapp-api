@@ -57,7 +57,7 @@ export class AppController {
   @ApiBody({
     schema: {
       properties: {
-        numero: {
+        celular: {
           type: 'number',
           example: 59156487954,
         },
@@ -73,7 +73,7 @@ export class AppController {
     };
 
     const data = new searchDTO();
-    data.numero = body.numero;
+    data.celular = body.celular;
 
     const valid = await validate(data);
     if (valid.length > 0) {
@@ -105,7 +105,7 @@ export class AppController {
   @ApiBody({
     schema: {
       properties: {
-        numero: {
+        celular: {
           type: 'number',
           example: 59156487954,
         },
@@ -123,14 +123,6 @@ export class AppController {
             },
           ],
         },
-        funcionarioId: {
-          type: 'number',
-          example: 0,
-        },
-        aplicacion: {
-          type: 'string',
-          example: 'nombre de la aplicación',
-        },
         guardar: {
           type: 'boolean',
           example: true,
@@ -147,7 +139,7 @@ export class AppController {
     };
 
     const data = new whatsappDTO();
-    data.numero = body.numero;
+    data.celular = body.celular;
     data.mensaje = body.mensaje;
     data.adjuntos = body.adjuntos;
     data.guardar = body.guardar;
@@ -188,10 +180,10 @@ export class AppController {
           }
           const logs = {
             origen: {
-              numero: process.env.FROM_SEND,
+              celular: process.env.FROM_SEND,
             },
             destino: {
-              numero: data.numero,
+              celular: data.celular,
               mensaje: data.mensaje,
               fichero,
             },

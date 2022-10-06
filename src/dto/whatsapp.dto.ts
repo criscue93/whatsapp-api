@@ -11,7 +11,7 @@ export class whatsappDTO {
   @IsInt({ message: 'El número de destino tienen que ser un número.' })
   @IsDefined({ message: 'El número de destino son obligatorios.' })
   @ApiProperty()
-  numero: number;
+  celular: number;
 
   @IsString({ message: 'Subject tiene que ser una cadena.' })
   @IsDefined({ message: 'Subject es obligatorio.' })
@@ -33,5 +33,5 @@ export class searchDTO {
   @IsInt({ message: 'El número de destino tienen que ser un número.' })
   @IsDefined({ message: 'El número de destino son obligatorios.' })
   @ApiProperty()
-  numero: number;
+  celular: number;
 }

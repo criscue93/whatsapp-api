@@ -73,7 +73,7 @@ export class AppService {
       status: 422,
     };
 
-    const number = `${data.numero}@c.us`;
+    const number = `${data.celular}@c.us`;
     const answer = this.client.getNumberId(number);
     const respuesta = await answer.then((res) => res);
 
@@ -97,7 +97,7 @@ export class AppService {
     };
 
     try {
-      const number = `${data.numero}@c.us`;
+      const number = `${data.celular}@c.us`;
       const sms = data.mensaje;
       this.client.sendMessage(number, sms);
 
